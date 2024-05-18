@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {Profile} from "juny-react-style";
 import {MediaDesktopOnly} from "../../lib/component/MediaDesktopOnly";
-import {MediaMobileOnly, MediaMobileOnlyStyle} from "../../lib/component/MediaMobileOnly";
+import { MediaMobileOnlyStyle} from "../../lib/component/MediaMobileOnly";
 
 const CommentContainer = styled.div`
   width: 100%;
@@ -107,10 +107,12 @@ const GithubIssueReply = (props: GithubIssueProps) => {
             },
         })
             .then(response => {
+                if(response.status !== 200){
+                    throw new Error(`[Github API Exception] ${response.status} ${response.statusText}`)
+                }
                 return response.json();
             })
             .then((result: GithubIssueResponse[] | []) => {
-                console.log("=>(GithubIssueReply.tsx:32) result", result);
                 setReplyList(result);
             })
             .catch(error => {
@@ -119,7 +121,7 @@ const GithubIssueReply = (props: GithubIssueProps) => {
     },[])
     return (
         <ColumnContainer>
-            {replyList.map((reply,index) => {
+            {replyList && replyList.map((reply,index) => {
                 return (
                     <Comment
                         key={index}
