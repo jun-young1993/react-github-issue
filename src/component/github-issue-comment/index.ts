@@ -1,0 +1,1 @@
+export {default as GithubIssueComment} from './GithubIssueComment';
