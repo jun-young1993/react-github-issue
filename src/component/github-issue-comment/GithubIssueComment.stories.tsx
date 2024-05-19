@@ -1,4 +1,4 @@
-import { GithubIssueComment} from "./index";
+import { GithubIssueComment } from "./index";
 import {StoryFn} from "@storybook/react";
 
 export default {
@@ -9,7 +9,7 @@ export default {
 const Template: StoryFn<typeof GithubIssueComment> = (args) => <GithubIssueComment {...args} />
 export const GithubIssueTemplate = Template.bind({});
 GithubIssueTemplate.args = {
-    gitPersonalAccessToken: "###__###",
+    gitPersonalAccessToken: "###_####",
     hiddenPreview: false,
     previewBox: undefined
 }

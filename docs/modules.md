@@ -6,15 +6,15 @@
 
 ### Functions
 
-- [GithubIssueReply](modules.md#githubissue)
+- [GithubIssueReplyList](modules.md#githubissue)
 - [GithubIssueComment](modules.md#githubissuecomment)
 - [GithubProfile](modules.md#githubprofile)
 
 ## Functions
 
-### GithubIssueReply
+### GithubIssueReplyList
 
-▸ **GithubIssueReply**(`props`): `Element`
+▸ **GithubIssueReplyList**(`props`): `Element`
 
 #### Parameters
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[github-issue/GithubIssueReply.tsx:4](https://github.com/jun-young1993/react-github-issue/blob/24962b11252d1c7ee6b422c2a3347174995ea29b/src/component/github-issue/GithubIssue.tsx#L4)
+[github-issue/GithubIssueReplyList.tsx:4](https://github.com/jun-young1993/react-github-issue/blob/24962b11252d1c7ee6b422c2a3347174995ea29b/src/component/github-issue/GithubIssue.tsx#L4)
 
 ___
 

@@ -47,6 +47,8 @@ const CommentBody = styled.div`
   margin-left: 10px;
   padding: 10px;
   border: 1px solid #ddd;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 `;
 
 const OwnerBadge = styled.span`
@@ -68,7 +70,7 @@ interface GithubIssueResponse {
         avatar_url: string
     }
 }
-const Comment = (issue: GithubIssueResponse) => (
+const GithubIssueReply = (issue: GithubIssueResponse) => (
     <ProfileContainer>
         <MediaDesktopOnly>
         <Profile src={issue.user.avatar_url} style={{
@@ -86,51 +88,5 @@ const Comment = (issue: GithubIssueResponse) => (
     </ProfileContainer>
 );
 
-
-const ColumnContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-`;
-
-
-const GithubIssueReply = (props: GithubIssueProps) => {
-    const {gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo ,...GithubIssueProps} = props;
-    const [replyList, setReplyList] = useState<GithubIssueResponse[] | []>([]);
-    useEffect(() => {
-        fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments`, {
-            method: 'GET',
-            headers: {
-                'Accept' : "application/vnd.github+json",
-                'X-GitHub-Api-Version': "2022-11-28",
-                'Authorization': `Bearer ${gitPersonalAccessToken}`
-            },
-        })
-            .then(response => {
-                if(response.status !== 200){
-                    throw new Error(`[Github API Exception] ${response.status} ${response.statusText}`)
-                }
-                return response.json();
-            })
-            .then((result: GithubIssueResponse[] | []) => {
-                setReplyList(result);
-            })
-            .catch(error => {
-
-            });
-    },[])
-    return (
-        <ColumnContainer>
-            {replyList && replyList.map((reply,index) => {
-                return (
-                    <Comment
-                        key={index}
-                        {...reply}
-                    />
-                )
-            })}
-        </ColumnContainer>
-    )
-};
 
 export default GithubIssueReply;
