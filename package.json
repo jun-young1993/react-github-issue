@@ -1,6 +1,6 @@
 {
   "name": "react-github-issue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "dependencies": {
     "juny-react-style": "^1.1.7",
