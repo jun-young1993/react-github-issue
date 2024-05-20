@@ -15,6 +15,8 @@ import React, {ReactNode} from "react";
  * @property {string} [submitText] - Optional text to display on the submit button, default is "Comment".
  * @property {boolean} [hiddenPreview] - If true, hides the preview tab, allowing only textual input.
  * @property {ReactNode} [previewBox] - Optional component or node to display in the preview tab; used to render markdown or custom previews.
+ * @property {string} [gitOAuthClientId]
+ * @property {string} [gitOAuthScope] default is "read:user"
  */
 export interface GithubIssueCommentProps {
     gitPersonalAccessToken?: gitPersonalAccessToken
@@ -27,5 +29,6 @@ export interface GithubIssueCommentProps {
     submitText?: string
     hiddenPreview?: boolean
     previewBox?: ReactNode
-    gitOAuthClientId?: string
+    gitOAuthClientId: string
+    gitOAuthScope?: string
 }

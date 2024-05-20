@@ -90,7 +90,7 @@ const CommentButton = styled.button`
   }
 `;
 
-const LoginButton = styled.button`
+const LoginButton = styled.a`
   float: right;
   margin: 10px;
   padding: 6px 12px;
@@ -150,7 +150,12 @@ const HeaderTitle = styled.strong`
  * />
  */
 const GithubIssueComment = (props: GithubIssueCommentProps) => {
-    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox, onLogin } = props;
+    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox, onLogin, gitOAuthClientId, gitOAuthScope } = props;
+    const githubLoginUrl = "https://github.com/login/oauth/authorize"
+    const githubLoginUrlQueryString = new URLSearchParams({
+        client_id: gitOAuthClientId,
+        scope: gitOAuthScope ?? 'read:user'
+    }).toString();
     const [comment, setComment] = useState('');
     const [activeTab, setActiveTab] = useState(activeTabProps === 'preview' ? 'preview' : 'write');
 
@@ -163,25 +168,12 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
     }
 
     const [isLogin, setIsLogin] = useState<boolean>(false);
+
     useEffect(() => {
-        if(isLogin === false && props.gitPersonalAccessToken){
+        if(props.gitPersonalAccessToken && isLogin === false){
             setIsLogin(true);
         }
-    },[])
-    const handleGithubLogin = () => {
-        onLogin && onLogin();
-        // if(!props.gitOAuthClientId){
-        //     throw new Error("A Git OAuth Client ID is required for OAuth login");
-        // }
-        // const config = {
-        //     client_id: props.gitOAuthClientId,
-        //     scope: "read:user",
-        //     // allow_signup: true,
-        // }
-        // const githubLoginUrl = "https://github.com/login/oauth/authorize"
-        // const params = new URLSearchParams(config).toString();
-        // window.open(`${githubLoginUrl}?${params}`);
-    }
+    },[]);
 
 
     return (
@@ -258,9 +250,8 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                         <div style={{width: "25px", height: "25px", margin: "10px"}}>
                             <Github />
                         </div>
-
                         <LoginButton
-                            onClick={handleGithubLogin}
+                            href={`${githubLoginUrl}?${githubLoginUrlQueryString}`}
                         >
                                 Sign in width Github
                         </LoginButton>
