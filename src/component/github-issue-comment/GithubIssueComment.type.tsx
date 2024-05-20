@@ -17,13 +17,15 @@ import React, {ReactNode} from "react";
  * @property {ReactNode} [previewBox] - Optional component or node to display in the preview tab; used to render markdown or custom previews.
  */
 export interface GithubIssueCommentProps {
-    gitPersonalAccessToken: gitPersonalAccessToken
+    gitPersonalAccessToken?: gitPersonalAccessToken
     title?: string
     activeTab?: 'write' | 'preview',
     onChange?: (comment: string) => void
     placeHolder?: string
     onSubmit?: (comment: string) => void
+    onLogin?: () => void
     submitText?: string
     hiddenPreview?: boolean
     previewBox?: ReactNode
+    gitOAuthClientId?: string
 }

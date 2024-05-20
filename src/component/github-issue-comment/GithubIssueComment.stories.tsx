@@ -9,7 +9,8 @@ export default {
 const Template: StoryFn<typeof GithubIssueComment> = (args) => <GithubIssueComment {...args} />
 export const GithubIssueTemplate = Template.bind({});
 GithubIssueTemplate.args = {
-    gitPersonalAccessToken: "###_####",
+    gitPersonalAccessToken: "d38d51492371b471c8cc",
+    gitOAuthClientId:"Ov23liGM382w3Bfh3NqJ",
     hiddenPreview: false,
     previewBox: undefined
 }

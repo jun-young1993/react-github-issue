@@ -30,7 +30,6 @@ const GithubIssueReplyList = (props: GithubIssueProps) => {
                 return response.json();
             })
             .then((result: GithubIssueResponse[] | []) => {
-                console.log("=>(GithubIssueReplyList.tsx:34) result", result);
                 setReplyList(result);
             })
             .catch(error => {

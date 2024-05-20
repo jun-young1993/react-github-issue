@@ -1,13 +1,16 @@
-import React, {ChangeEvent, MouseEventHandler, TextareaHTMLAttributes, useState} from 'react';
+import React, {ChangeEvent, MouseEventHandler, TextareaHTMLAttributes, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { GithubProfile } from "../github-profile";
 import { GithubIssueCommentProps } from "./GithubIssueComment.type";
 import {MediaDesktopOnly} from "../../lib/component/MediaDesktopOnly";
-import {MediaMobileOnly} from "../../lib/component/MediaMobileOnly";
+import {MediaMobileOnly, MediaMobileOnlyStyle} from "../../lib/component/MediaMobileOnly";
+import Github from "../../lib/images/github";
 
 const Container = styled.div`
   display: flex;
-  width: 100%
+  width: 100%;
+  margin: 5px;
+  
 `;
 const ColumnContainer = styled.div`
     display: flex;
@@ -18,7 +21,8 @@ const ColumnContainer = styled.div`
 const CommentEditorContainer = styled.div`
   border: 1px solid #d1d5da;
   border-radius: 6px;
-  width: 100%
+  width: 100%;
+  background-color: #ffffff;
 `;
 
 const Tabs = styled.div`
@@ -45,6 +49,13 @@ const CommentBox = styled.textarea<TextareaHTMLAttributes<HTMLTextAreaElement>>`
   border: none;
   padding: 10px;
   box-sizing: border-box;
+  border: 1px solid #d1d5da;
+  border-radius: 5px;
+  margin: 3px;
+  
+  ${MediaMobileOnlyStyle(`
+    height: 35px;
+  `)}
 `;
 const PreviewBox = styled.div`
   width: 100%;
@@ -53,6 +64,7 @@ const PreviewBox = styled.div`
   border: none;
   padding: 10px;
   box-sizing: border-box;
+  background-color: #ffffff;
 `;
 
 const MarkdownSupport = styled.div`
@@ -78,10 +90,27 @@ const CommentButton = styled.button`
   }
 `;
 
+const LoginButton = styled.button`
+  float: right;
+  margin: 10px;
+  padding: 6px 12px;
+  background-color: #eeebeb;
+  //color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #dedcdc;
+  }
+`;
+
 
 const HeaderTitle = styled.strong`
     margin-left: 10px;
 `;
+
+
 
 /**
  * A React component that serves as a GitHub issue comment interface with responsive behavior.
@@ -121,9 +150,9 @@ const HeaderTitle = styled.strong`
  * />
  */
 const GithubIssueComment = (props: GithubIssueCommentProps) => {
-    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox } = props;
+    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox, onLogin } = props;
     const [comment, setComment] = useState('');
-    const [activeTab, setActiveTab] = useState(activeTabProps === 'write' ? 'write' : 'preview');
+    const [activeTab, setActiveTab] = useState(activeTabProps === 'preview' ? 'preview' : 'write');
 
     const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setComment(e.target.value);
@@ -133,36 +162,62 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         onSubmit && onSubmit(comment);
     }
 
+    const [isLogin, setIsLogin] = useState<boolean>(false);
+    useEffect(() => {
+        if(isLogin === false && props.gitPersonalAccessToken){
+            setIsLogin(true);
+        }
+    },[])
+    const handleGithubLogin = () => {
+        onLogin && onLogin();
+        // if(!props.gitOAuthClientId){
+        //     throw new Error("A Git OAuth Client ID is required for OAuth login");
+        // }
+        // const config = {
+        //     client_id: props.gitOAuthClientId,
+        //     scope: "read:user",
+        //     // allow_signup: true,
+        // }
+        // const githubLoginUrl = "https://github.com/login/oauth/authorize"
+        // const params = new URLSearchParams(config).toString();
+        // window.open(`${githubLoginUrl}?${params}`);
+    }
+
+
     return (
         <Container>
             <MediaDesktopOnly>
-                <GithubProfile
-                    gitPersonalAccessToken={gitPersonalAccessToken}
-                    profileHidden={{
-                        name: true,
-                        bio: true,
-                        location: true,
-                        email: true,
-                        html_url: true,
-                        blog: true
-                    }}
-                />
+                {gitPersonalAccessToken &&
+                    <GithubProfile
+                        gitPersonalAccessToken={gitPersonalAccessToken}
+                        profileHidden={{
+                            name: true,
+                            bio: true,
+                            location: true,
+                            email: true,
+                            html_url: true,
+                            blog: true
+                        }}
+                    />
+                }
             </MediaDesktopOnly>
             <ColumnContainer>
                 <header>
                     <Container>
                         <MediaMobileOnly>
-                            <GithubProfile
-                                gitPersonalAccessToken={gitPersonalAccessToken}
-                                profileHidden={{
-                                    name: true,
-                                    bio: true,
-                                    location: true,
-                                    email: true,
-                                    html_url: true,
-                                    blog: true
-                                }}
-                            />
+                            {gitPersonalAccessToken &&
+                                <GithubProfile
+                                    gitPersonalAccessToken={gitPersonalAccessToken}
+                                    profileHidden={{
+                                        name: true,
+                                        bio: true,
+                                        location: true,
+                                        email: true,
+                                        html_url: true,
+                                        blog: true
+                                    }}
+                                />
+                            }
                         </MediaMobileOnly>
                         <HeaderTitle>{title ?? 'Add a comment'}</HeaderTitle>
                     </Container>
@@ -186,18 +241,30 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                                     placeholder={placeHolder ?? "Add your comment here..."}
                                 />
                                 : <PreviewBox>
-                                    {previewBox}
+                                    {previewBox ?? 'Nothing to preview'}
                                 </PreviewBox>}
 
                             <MarkdownSupport>
                                 {/*Markdown is supported*/}
                             </MarkdownSupport>
                 </CommentEditorContainer>
-                <CommentButton
-                    onClick={handleCommentSubmit}
-                >
-                    {submitText ?? 'Comment'}
-                </CommentButton>
+                {isLogin
+                ? <CommentButton
+                        onClick={handleCommentSubmit}
+                    >
+                        {submitText ?? 'Comment'}
+                    </CommentButton>
+                    : <Container>
+                        <div style={{width: "25px", height: "25px", margin: "10px"}}>
+                            <Github />
+                        </div>
+
+                        <LoginButton
+                            onClick={handleGithubLogin}
+                        >
+                                Sign in width Github
+                        </LoginButton>
+                    </Container>}
             </ColumnContainer>
         </Container>
     );
