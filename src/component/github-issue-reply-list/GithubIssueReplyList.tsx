@@ -12,10 +12,11 @@ const ColumnContainer = styled.div`
 `;
 
 const GithubIssueReplyList = (props: GithubIssueProps) => {
-    const {gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo ,...GithubIssueProps} = props;
+    const {gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo, direction ,...GithubIssueProps} = props;
     const [replyList, setReplyList] = useState<GithubIssueResponse[] | []>([]);
     useEffect(() => {
-        fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments`, {
+        
+        fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments?direction=${direction ?? 'asc'}`, {
             method: 'GET',
             headers: {
                 'Accept' : "application/vnd.github+json",
@@ -33,7 +34,9 @@ const GithubIssueReplyList = (props: GithubIssueProps) => {
                 setReplyList(result);
             })
             .catch(error => {
-                throw new Error(error.toString());
+                throw new Error(error.toString()+`
+                https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments
+                `);
             });
     },[])
     return (

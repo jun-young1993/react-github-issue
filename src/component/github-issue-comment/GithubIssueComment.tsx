@@ -141,20 +141,31 @@ const HeaderTitle = styled.strong`
  * Usage:
  * <GithubIssueComment
  *   gitPersonalAccessToken="your_token_here"
+ *   gitOwner="git owner"
+ *   gitRepo="git repo"
+ *   gitIssueNumber="gitIssueNumber"
  *   title="Optional custom title"
  *   activeTab="write"
  *   onChange={(text, event) => console.log(text)}
  *   onSubmit={(text, event) => console.log('Submitted:', text)}
  *   placeHolder="Type your comment here"
  *   submitText="Post Comment"
+ *      
  * />
  */
 const GithubIssueComment = (props: GithubIssueCommentProps) => {
-    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox, onLogin, gitOAuthClientId, gitOAuthScope } = props;
+    
+    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox, gitOAuthClientId, gitOAuthScope,
+        onAutoComment,
+        autoComment = true,
+        gitOwner,
+        gitRepo,
+        gitIssueNumber
+     } = props;
     const githubLoginUrl = "https://github.com/login/oauth/authorize"
     const githubLoginUrlQueryString = new URLSearchParams({
         client_id: gitOAuthClientId,
-        scope: gitOAuthScope ?? 'read:user'
+        scope: gitOAuthScope ?? 'read:user profile:read issues:write pull_requests:write repo'
     }).toString();
     const [comment, setComment] = useState('');
     const [activeTab, setActiveTab] = useState(activeTabProps === 'preview' ? 'preview' : 'write');
@@ -164,7 +175,40 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         onChange && onChange(e.target.value);
     };
     const handleCommentSubmit = () => {
-        onSubmit && onSubmit(comment);
+        console.log(gitOwner,
+            gitRepo,
+            gitIssueNumber,
+            gitPersonalAccessToken,
+            autoComment,
+            comment);
+        if(gitOwner && gitRepo && gitIssueNumber && gitPersonalAccessToken && autoComment){
+            if(comment){
+                fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments`,{
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/vnd.github+json",
+                        "Authorization": `Bearer ${gitPersonalAccessToken}`,
+                        "X-GitHub-Api-Version": "2022-11-28"
+                    },
+                    body: JSON.stringify({
+                        body: comment
+                    })
+                })
+                .then((result) => {
+                    console.log(result);
+                    onAutoComment && onAutoComment(result);
+                });
+            }else{
+                onSubmit && onSubmit(comment);
+            }
+            
+        }else{
+            onSubmit && onSubmit(comment);
+        }
+        
+        
+        
+        
     }
 
     const [isLogin, setIsLogin] = useState<boolean>(false);

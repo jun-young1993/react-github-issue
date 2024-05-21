@@ -21,7 +21,7 @@ import React, {ReactNode} from "react";
 export interface GithubIssueCommentProps {
     gitPersonalAccessToken?: gitPersonalAccessToken
     title?: string
-    activeTab?: 'write' | 'preview',
+    activeTab?: 'write' | 'preview'
     onChange?: (comment: string) => void
     placeHolder?: string
     onSubmit?: (comment: string) => void
@@ -31,4 +31,9 @@ export interface GithubIssueCommentProps {
     previewBox?: ReactNode
     gitOAuthClientId: string
     gitOAuthScope?: string
+    gitOwner?: string
+    gitRepo?: string
+    gitIssueNumber?: string
+    autoComment?: boolean
+    onAutoComment?:  (response: Response) => void
 }

@@ -3,4 +3,5 @@ export interface GithubIssueProps {
     gitOwner: string,
     gitRepo: string
     gitIssueNumber: number
+    direction?: 'asc' | 'desc'
 }
