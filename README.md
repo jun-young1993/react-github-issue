@@ -12,6 +12,7 @@ npm i react-github-issue
 ## GithubIssueComment
 
 <img src="https://juny.vercel.app/api/github/image/Pasted image 20240519112050.png">
+
 <img src="https://juny.vercel.app/api/github/image/Pasted image 20240520234104.png">
 
 >required property
@@ -35,6 +36,7 @@ import { GithubIssueComment } from 'react-github-issue';
 <img src="https://juny.vercel.app/api/github/image/Pasted image 20240519113424.png">
 
 ### example
+
 ```tsx
 import { GithubIssueReplyList } from 'react-github-issue';
 <GithubIssueReplyList 

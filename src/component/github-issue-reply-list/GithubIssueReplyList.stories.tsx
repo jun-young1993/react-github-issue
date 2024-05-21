@@ -1,5 +1,6 @@
-import { GithubIssueReplyList } from "./index";
+
 import {StoryFn} from "@storybook/react";
+import { GithubIssueReplyList } from "./index";
 
 export default {
     title: 'GithubIssueReplyList',

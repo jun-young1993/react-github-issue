@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {GithubIssueProps} from "./GithubIssueReply.type";
+import {GithubIssueProps, GithubIssueResponse} from "./GithubIssueReply.type";
 import React from 'react';
 import styled from 'styled-components';
 import {Profile} from "juny-react-style";
@@ -61,15 +61,7 @@ const ProfileContainer = styled.div`
   display: flex;
   width: 100%
 `;
-interface GithubIssueResponse {
-    updated_at: Date
-    body: string
-    user: {
-        login: string,
-        site_admin: boolean,
-        avatar_url: string
-    }
-}
+
 const GithubIssueReply = (issue: GithubIssueResponse) => (
     <ProfileContainer>
         <MediaDesktopOnly>

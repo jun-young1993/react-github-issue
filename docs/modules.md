@@ -6,31 +6,12 @@
 
 ### Functions
 
-- [GithubIssueReplyList](modules.md#githubissue)
 - [GithubIssueComment](modules.md#githubissuecomment)
+- [GithubIssueReply](modules.md#githubissuereply)
+- [GithubIssueReplyList](modules.md#githubissuereplylist)
 - [GithubProfile](modules.md#githubprofile)
 
 ## Functions
-
-### GithubIssueReplyList
-
-▸ **GithubIssueReplyList**(`props`): `Element`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `props` | `GithubIssueProps` |
-
-#### Returns
-
-`Element`
-
-#### Defined in
-
-[github-issue/GithubIssueReplyList.tsx:4](https://github.com/jun-young1993/react-github-issue/blob/24962b11252d1c7ee6b422c2a3347174995ea29b/src/component/github-issue/GithubIssue.tsx#L4)
-
-___
 
 ### GithubIssueComment
 
@@ -64,17 +45,61 @@ handleCommentSubmit - Invokes the onSubmit prop callback when the comment is sub
 Usage:
 <GithubIssueComment
   gitPersonalAccessToken="your_token_here"
+  gitOwner="git owner"
+  gitRepo="git repo"
+  gitIssueNumber="gitIssueNumber"
   title="Optional custom title"
   activeTab="write"
   onChange={(text, event) => console.log(text)}
   onSubmit={(text, event) => console.log('Submitted:', text)}
   placeHolder="Type your comment here"
   submitText="Post Comment"
+     
 />
 
 #### Defined in
 
-[github-issue-comment/GithubIssueComment.tsx:134](https://github.com/jun-young1993/react-github-issue/blob/24962b11252d1c7ee6b422c2a3347174995ea29b/src/component/github-issue-comment/GithubIssueComment.tsx#L134)
+[github-issue-comment/GithubIssueComment.tsx:156](https://github.com/jun-young1993/react-github-issue/blob/848b1c82ae6cf992a34574efb4dc11de88b5284e/src/component/github-issue-comment/GithubIssueComment.tsx#L156)
+
+___
+
+### GithubIssueReply
+
+▸ **GithubIssueReply**(`issue`): `Element`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `issue` | `GithubIssueResponse` |
+
+#### Returns
+
+`Element`
+
+#### Defined in
+
+[github-issue-reply/GithubIssueReply.tsx:65](https://github.com/jun-young1993/react-github-issue/blob/848b1c82ae6cf992a34574efb4dc11de88b5284e/src/component/github-issue-reply/GithubIssueReply.tsx#L65)
+
+___
+
+### GithubIssueReplyList
+
+▸ **GithubIssueReplyList**(`props`): `Element`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `props` | `GithubIssueProps` |
+
+#### Returns
+
+`Element`
+
+#### Defined in
+
+[github-issue-reply-list/GithubIssueReplyList.tsx:14](https://github.com/jun-young1993/react-github-issue/blob/848b1c82ae6cf992a34574efb4dc11de88b5284e/src/component/github-issue-reply-list/GithubIssueReplyList.tsx#L14)
 
 ___
 
@@ -111,4 +136,4 @@ Component Structure:
 
 #### Defined in
 
-[github-profile/GithubProfile.tsx:105](https://github.com/jun-young1993/react-github-issue/blob/24962b11252d1c7ee6b422c2a3347174995ea29b/src/component/github-profile/GithubProfile.tsx#L105)
+[github-profile/GithubProfile.tsx:54](https://github.com/jun-young1993/react-github-issue/blob/848b1c82ae6cf992a34574efb4dc11de88b5284e/src/component/github-profile/GithubProfile.tsx#L54)

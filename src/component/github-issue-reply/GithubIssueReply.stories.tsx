@@ -1,14 +1,12 @@
 import {StoryFn} from "@storybook/react";
 import {GithubIssueReply} from "./index";
-import {GithubIssueResponse} from "./GithubIssueReply.type";
-
 
 export default {
     title: 'GithubIssueReply',
     component: GithubIssueReply
 }
 
-const Template: StoryFn<typeof GithubIssueReply> = (args: GithubIssueResponse) => <GithubIssueReply {...args} />
+const Template: StoryFn<typeof GithubIssueReply> = (args) => <GithubIssueReply {...args} />
 
 export const GithubIssueReplyTemplate = Template.bind({});
 GithubIssueReplyTemplate.args = {

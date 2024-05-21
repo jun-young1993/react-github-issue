@@ -1,11 +1,33 @@
-import React, {ChangeEvent, MouseEventHandler, TextareaHTMLAttributes, useEffect, useState} from 'react';
-import styled from 'styled-components';
+import React, {ChangeEvent, TextareaHTMLAttributes, useEffect, useState} from 'react';
+import styled, {keyframes} from 'styled-components';
 import { GithubProfile } from "../github-profile";
 import { GithubIssueCommentProps } from "./GithubIssueComment.type";
 import {MediaDesktopOnly} from "../../lib/component/MediaDesktopOnly";
 import {MediaMobileOnly, MediaMobileOnlyStyle} from "../../lib/component/MediaMobileOnly";
 import Github from "../../lib/images/github";
 
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const SpinerWrapper = styled.div`
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  &:after {
+    content: " ";
+    display: block;
+    width: 30px;
+    height: 30px;
+    //margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #000;
+    border-color: #000 transparent #000 transparent;
+    animation: ${spin} 1.2s linear infinite;
+  }
+`;
 const Container = styled.div`
   display: flex;
   width: 100%;
@@ -168,6 +190,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         scope: gitOAuthScope ?? 'read:user profile:read issues:write pull_requests:write repo'
     }).toString();
     const [comment, setComment] = useState('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState(activeTabProps === 'preview' ? 'preview' : 'write');
 
     const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -175,14 +198,12 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         onChange && onChange(e.target.value);
     };
     const handleCommentSubmit = () => {
-        console.log(gitOwner,
-            gitRepo,
-            gitIssueNumber,
-            gitPersonalAccessToken,
-            autoComment,
-            comment);
+
         if(gitOwner && gitRepo && gitIssueNumber && gitPersonalAccessToken && autoComment){
-            if(comment){
+
+            if(comment && !isLoading){
+                setIsLoading(true);
+
                 fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments`,{
                     method: "POST",
                     headers: {
@@ -195,10 +216,15 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                     })
                 })
                 .then((result) => {
-                    console.log(result);
+                    setIsLoading(false);
+                    setComment('');
                     onAutoComment && onAutoComment(result);
+                })
+                .catch(() => {
+                    setIsLoading(false);
                 });
             }else{
+                setIsLoading(false);
                 onSubmit && onSubmit(comment);
             }
             
@@ -288,7 +314,9 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                 ? <CommentButton
                         onClick={handleCommentSubmit}
                     >
-                        {submitText ?? 'Comment'}
+                        {isLoading
+                            ? <SpinerWrapper />
+                            : submitText ?? 'Comment'}
                     </CommentButton>
                     : <Container>
                         <div style={{width: "25px", height: "25px", margin: "10px"}}>

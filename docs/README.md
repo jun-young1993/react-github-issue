@@ -1,5 +1,9 @@
 react-github-issue / [Exports](modules.md)
 
+react-github-issue / [Exports](modules.md)
+
+# [👉 move to the homepage 👈](https://www.juny.blog/blog/docs/react-github-issue.md)
+
 # react-github-issue
 
 # install
@@ -11,13 +15,21 @@ npm i react-github-issue
 
 <img src="https://juny.vercel.app/api/github/image/Pasted image 20240519112050.png">
 
+<img src="https://juny.vercel.app/api/github/image/Pasted image 20240520234104.png">
 
+>required property
+- gitOAuthClientId
+    - [Github OAuth](https://www.juny.blog/blog/Diverse/Github%20OAuth.md)
+>it the gitPersonalAccessToken is undefined, a login button appears, and if the gitPersonalAccessToken has a value, acomment button appears
+>
+>ㅣlearn how to obtain the 'Git OAuth Secret Id' and 'Git Personal Access Token' using the Github OAuth link above
 ### example
 ```tsx
 import { GithubIssueComment } from 'react-github-issue';
 
 <GithubIssueComment
-	gitPersonalAccessToken={your token}
+    gitOAuthClientId={your git oAuth secret}
+    gitPersonalAccessToken={your token | undefined}
 />
 ```
 
@@ -26,6 +38,7 @@ import { GithubIssueComment } from 'react-github-issue';
 <img src="https://juny.vercel.app/api/github/image/Pasted image 20240519113424.png">
 
 ### example
+
 ```tsx
 import { GithubIssueReplyList } from 'react-github-issue';
 <GithubIssueReplyList 
