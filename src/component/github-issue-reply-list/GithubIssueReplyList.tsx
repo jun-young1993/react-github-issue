@@ -12,7 +12,7 @@ const ColumnContainer = styled.div`
 `;
 
 const GithubIssueReplyList = (props: GithubIssueProps) => {
-    const {gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo, direction ,...GithubIssueProps} = props;
+    const {gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo, direction, reload, onLoaded, ...GithubIssueProps} = props;
     const [replyList, setReplyList] = useState<GithubIssueResponse[] | []>([]);
     useEffect(() => {
         
@@ -38,7 +38,7 @@ const GithubIssueReplyList = (props: GithubIssueProps) => {
                 https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments
                 `);
             });
-    },[])
+    },[reload])
     return (
         <ColumnContainer>
             {replyList && replyList.map((reply,index) => {
