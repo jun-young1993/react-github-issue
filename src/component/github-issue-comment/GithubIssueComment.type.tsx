@@ -32,15 +32,10 @@ export interface GithubIssueCommentProps {
     onChange?: (comment: string) => void
     placeHolder?: string
     onSubmit?: (comment: string) => void
-    onLogin?: () => void
     submitText?: string
     hiddenPreview?: boolean
     previewBox?: ReactNode
-    gitOAuthClientId: string
-    gitOAuthScope?: string
-    gitOwner?: string
-    gitRepo?: string
-    gitIssueNumber?: string
-    autoComment?: boolean
-    onAutoComment?:  (response: Response) => void
+    isLoading?:boolean
+    isLogin?: boolean
+    onLogin?: () => void
 }

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, TextareaHTMLAttributes, useEffect, useState} from 'react';
+import {ChangeEvent, TextareaHTMLAttributes, useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components';
 import { GithubProfile } from "../github-profile";
 import { GithubIssueCommentProps } from "./GithubIssueComment.type";
@@ -177,20 +177,23 @@ const HeaderTitle = styled.strong`
  */
 const GithubIssueComment = (props: GithubIssueCommentProps) => {
     
-    const { gitPersonalAccessToken, title, activeTab: activeTabProps, onChange, placeHolder, onSubmit, submitText, hiddenPreview,previewBox, gitOAuthClientId, gitOAuthScope,
-        onAutoComment,
-        autoComment = true,
-        gitOwner,
-        gitRepo,
-        gitIssueNumber
+    const { 
+        gitPersonalAccessToken, 
+        title, 
+        activeTab: activeTabProps, 
+        onChange, 
+        placeHolder, 
+        onSubmit, 
+        onLogin,
+        submitText, 
+        hiddenPreview,
+        previewBox, 
+        isLoading = false,
+        isLogin = false
      } = props;
-    const githubLoginUrl = "https://github.com/login/oauth/authorize"
-    const githubLoginUrlQueryString = new URLSearchParams({
-        client_id: gitOAuthClientId,
-        scope: gitOAuthScope ?? 'read:user profile:read issues:write pull_requests:write repo'
-    }).toString();
+
     const [comment, setComment] = useState('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    
     const [activeTab, setActiveTab] = useState(activeTabProps === 'preview' ? 'preview' : 'write');
 
     const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -198,54 +201,19 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         onChange && onChange(e.target.value);
     };
     const handleCommentSubmit = () => {
-
-        if(gitOwner && gitRepo && gitIssueNumber && gitPersonalAccessToken && autoComment){
-
-            if(comment && !isLoading){
-                setIsLoading(true);
-
-                fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments`,{
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/vnd.github+json",
-                        "Authorization": `Bearer ${gitPersonalAccessToken}`,
-                        "X-GitHub-Api-Version": "2022-11-28"
-                    },
-                    body: JSON.stringify({
-                        body: comment
-                    })
-                })
-                .then((result) => {
-                    setIsLoading(false);
-                    setComment('');
-                    onAutoComment && onAutoComment(result);
-                })
-                .catch(() => {
-                    setIsLoading(false);
-                });
-            }else{
-                setIsLoading(false);
-                onSubmit && onSubmit(comment);
-            }
-            
-        }else{
-            onSubmit && onSubmit(comment);
-        }
-        
-        
-        
-        
+        onSubmit && onSubmit(comment);
     }
 
-    const [isLogin, setIsLogin] = useState<boolean>(false);
+    const handleLogin = () => {
+        onLogin && onLogin();
+    }
 
     useEffect(() => {
-        if(props.gitPersonalAccessToken && isLogin === false){
-            setIsLogin(true);
+        if(isLoading){
+            setComment('');
         }
-    },[]);
-
-
+    },[isLoading])
+    
     return (
         <Container>
             <MediaDesktopOnly>
@@ -314,6 +282,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                 ? <CommentButton
                         onClick={handleCommentSubmit}
                     >
+                        
                         {isLoading
                             ? <SpinerWrapper />
                             : submitText ?? 'Comment'}
@@ -323,7 +292,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                             <Github />
                         </div>
                         <LoginButton
-                            href={`${githubLoginUrl}?${githubLoginUrlQueryString}`}
+                            onClick={handleLogin}
                         >
                                 Sign in width Github
                         </LoginButton>
