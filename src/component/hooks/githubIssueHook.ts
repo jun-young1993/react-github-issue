@@ -9,10 +9,12 @@ interface UseGithubIssueProps {
 	gitRepo: string;
 	direction?: string;
 }
+
 interface CommentOption {
 	onComment?: (response: Response) => void
 	onError?: (error: Error) => void
 }
+
 
 const useGithubIssue = ({
 	gitPersonalAccessToken,
@@ -28,7 +30,7 @@ const useGithubIssue = ({
 	const [isLogin, setIsLogin] = useState(Boolean(gitUserPersonalAccessToken) ?? false);
 
 	useEffect(() => {
-		fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments?direction=${direction ?? 'asc'}`, {
+		fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments?sort=updated&direction=${direction ?? 'desc'}`, {
 			method: 'GET',
 			headers: {
 			    'Accept' : "application/vnd.github+json",
@@ -38,7 +40,7 @@ const useGithubIssue = ({
 		    })
 			.then(response => {
 			    if(response.status !== 200){
-				throw new Error(`[Github API Exception] ${response.status} ${response.statusText}`)
+					throw new Error(`[Github API Exception] ${response.status} ${response.statusText}`)
 			    }
 			    return response.json();
 			})
@@ -50,6 +52,7 @@ const useGithubIssue = ({
 			    https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments
 			    `);
 			});
+
 	},[reloadNumber, gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo, direction]);
 
 	const locationLogin = (gitOAuthClientId: string) => {
@@ -58,7 +61,7 @@ const useGithubIssue = ({
 			client_id: gitOAuthClientId,
 			scope: 'read:user profile:read issues:write pull_requests:write repo'
 		    }).toString();
-		location.href = `${githubLoginUrl}?${githubLoginUrlQueryString}`;
+		window.location.href = `${githubLoginUrl}?${githubLoginUrlQueryString}`;
 	}
 
 

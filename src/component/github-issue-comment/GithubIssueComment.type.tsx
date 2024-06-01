@@ -39,3 +39,8 @@ export interface GithubIssueCommentProps {
     isLogin?: boolean
     onLogin?: () => void
 }
+
+export enum ActiveMode {
+    WRITE='write',
+    PREVIEW='preview'
+}
