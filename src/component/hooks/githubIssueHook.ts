@@ -1,4 +1,4 @@
-import { GithubIssueResponse } from "component/github-issue-reply/GithubIssueReply.type";
+import { GithubIssueResponse } from "../github-issue-reply/GithubIssueReply.type";
 import { useCallback, useEffect, useState } from "react"
 
 interface UseGithubIssueProps {
