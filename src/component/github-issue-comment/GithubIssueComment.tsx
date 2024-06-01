@@ -1,10 +1,11 @@
 import {ChangeEvent, TextareaHTMLAttributes, useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components';
-import { GithubProfile } from "../github-profile";
-import { GithubIssueCommentProps } from "./GithubIssueComment.type";
+import {GithubProfile} from "../github-profile";
+import {ActiveMode, GithubIssueCommentProps} from "./GithubIssueComment.type";
 import {MediaDesktopOnly} from "../../lib/component/MediaDesktopOnly";
 import {MediaMobileOnly, MediaMobileOnlyStyle} from "../../lib/component/MediaMobileOnly";
 import Github from "../../lib/images/github";
+import {useGithubMarkdownPreview} from "../hooks";
 
 
 const spin = keyframes`
@@ -39,12 +40,15 @@ const ColumnContainer = styled.div`
     flex-direction: column;
     width: 100%;
     margin-left: 10px;
+    box-sizing: border-box;
 `;
 const CommentEditorContainer = styled.div`
   border: 1px solid #d1d5da;
   border-radius: 6px;
   width: 100%;
   background-color: #ffffff;
+  box-sizing: border-box; // 추가
+  overflow: hidden; // 추가
 `;
 
 const Tabs = styled.div`
@@ -65,18 +69,23 @@ const Tab = styled.button`
   }
 `;
 
+const CommentBoxWrap = styled.div`
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+`;
 const CommentBox = styled.textarea<TextareaHTMLAttributes<HTMLTextAreaElement>>`
   width: 100%;
-  height: 100px;
-  border: none;
-  padding: 10px;
   box-sizing: border-box;
   border: 1px solid #d1d5da;
   border-radius: 5px;
-  margin: 3px;
-  
+  resize: vertical;
+  min-height: 60px;
+  height: auto;
   ${MediaMobileOnlyStyle(`
-    height: 35px;
+     height: auto;
+     min-height: 35px; 
   `)}
 `;
 const PreviewBox = styled.div`
@@ -194,7 +203,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
 
     const [comment, setComment] = useState('');
     
-    const [activeTab, setActiveTab] = useState(activeTabProps === 'preview' ? 'preview' : 'write');
+    const [activeTab, setActiveTab] = useState<ActiveMode>(activeTabProps === ActiveMode.PREVIEW ? ActiveMode.PREVIEW : ActiveMode.WRITE);
 
     const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setComment(e.target.value);
@@ -203,6 +212,10 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
     const handleCommentSubmit = () => {
         onSubmit && onSubmit(comment);
     }
+    const {text: markdownPreview} = useGithubMarkdownPreview({
+        gitPersonalAccessToken: gitPersonalAccessToken,
+        content: comment
+    });
 
     const handleLogin = () => {
         onLogin && onLogin();
@@ -212,7 +225,14 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         if(isLoading){
             setComment('');
         }
-    },[isLoading])
+    },[isLoading]);
+
+    useEffect(() => {
+        if(activeTab === ActiveMode.WRITE){
+
+        }
+    },[activeTab]);
+
     
     return (
         <Container>
@@ -254,25 +274,35 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
                 </header>
                 <CommentEditorContainer>
                             <Tabs>
-                                <Tab className={activeTab === 'write' ? 'active' : ''} onClick={() => setActiveTab('write')}>
+                                <Tab className={activeTab === 'write' ? 'active' : ''} onClick={() => setActiveTab(ActiveMode.WRITE)}>
                                     Write
                                 </Tab>
                                 {hiddenPreview
                                 ? null
-                                : <Tab className={activeTab === 'preview' ? 'active' : ''} onClick={() => setActiveTab('preview')}>
+                                : <Tab className={activeTab === 'preview' ? 'active' : ''} onClick={() => setActiveTab(ActiveMode.PREVIEW)}>
                                         Preview
                                     </Tab>}
 
                             </Tabs>
-                            {activeTab === 'write'
-                            ? <CommentBox
+                            {activeTab === ActiveMode.WRITE
+                            ? <CommentBoxWrap>
+                                <CommentBox
                                     value={comment}
                                     onChange={handleCommentChange}
                                     placeholder={placeHolder ?? "Add your comment here..."}
                                 />
-                                : <PreviewBox>
-                                    {previewBox ?? 'Nothing to preview'}
-                                </PreviewBox>}
+                                </CommentBoxWrap>
+                                :(
+                                    previewBox
+                                    ? <PreviewBox>{previewBox}</PreviewBox>
+                                    : <PreviewBox dangerouslySetInnerHTML={{__html: markdownPreview ?? 'Nothing to preview'}}/>
+                                )
+                                // <PreviewBox
+                                //     dangerouslySetInnerHTML={previewBox ?? markdownPreview}
+                                //     >
+                                //     {previewBox ?? (!(markdownPreview === '') ?? 'Nothing to preview')}
+                                // </PreviewBox>
+                                }
 
                             <MarkdownSupport>
                                 {/*Markdown is supported*/}
