@@ -216,7 +216,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
     const {text: markdownPreview} = useGithubMarkdownPreview({
         gitPersonalAccessToken: gitPersonalAccessToken,
         content: comment,
-        request: (activeTab === 'preview')
+        request: (activeTab === 'preview') && (previewBox === undefined)
     });
 
     const handleLogin = () => {
