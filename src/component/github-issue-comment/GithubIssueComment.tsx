@@ -194,6 +194,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
         placeHolder, 
         onSubmit, 
         onLogin,
+        onTab,
         submitText, 
         hiddenPreview,
         previewBox, 
@@ -214,7 +215,8 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
     }
     const {text: markdownPreview} = useGithubMarkdownPreview({
         gitPersonalAccessToken: gitPersonalAccessToken,
-        content: comment
+        content: comment,
+        request: (activeTab === 'preview')
     });
 
     const handleLogin = () => {
@@ -228,6 +230,7 @@ const GithubIssueComment = (props: GithubIssueCommentProps) => {
     },[isLoading]);
 
     useEffect(() => {
+        onTab && onTab(activeTab,comment);
         if(activeTab === ActiveMode.WRITE){
 
         }

@@ -38,6 +38,7 @@ export interface GithubIssueCommentProps {
     isLoading?:boolean
     isLogin?: boolean
     onLogin?: () => void
+    onTab?: (tab: 'write'| 'preview', comment: string) => void
 }
 
 export enum ActiveMode {

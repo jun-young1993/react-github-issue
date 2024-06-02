@@ -2,15 +2,18 @@ import {useState} from "react";
 interface UseGithubMarkdownPreviewProps {
     gitPersonalAccessToken?: string;
     content?: string
+    request?: boolean
 }
 const useGithubMarkdownPreview = ({
                                              gitPersonalAccessToken,
-                                             content
+                                             content,
+                                            request=true
                                          }: UseGithubMarkdownPreviewProps) => {
     const [text, setText] = useState<string>('');
+    const [requestText, setRequestText] = useState<string | undefined>(content);
 
-    if(content && gitPersonalAccessToken && content !== ''){
-
+    if(content && gitPersonalAccessToken && content !== '' && request && (content !== requestText)){
+        setRequestText(content);
         fetch('https://api.github.com/markdown',{
             method: 'POST',
             headers: {
@@ -37,8 +40,6 @@ const useGithubMarkdownPreview = ({
 			    	https://api.github.com/markdown
 			`);
             });
-    }else{
-        return {text: null, setText};
     }
 
     return {text,setText};
