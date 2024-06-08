@@ -2,7 +2,6 @@ import { GithubIssueResponse } from "../github-issue-reply/GithubIssueReply.type
 import { useCallback, useEffect, useState } from "react"
 
 interface UseGithubIssueProps {
-	gitPersonalAccessToken: string;
 	gitIssueNumber: string | number;
 	gitUserPersonalAccessToken?: string;
 	gitOwner: string;
@@ -17,7 +16,6 @@ interface CommentOption {
 
 
 const useGithubIssue = ({
-	gitPersonalAccessToken,
 	gitUserPersonalAccessToken,
 	gitIssueNumber,
 	gitOwner,
@@ -30,30 +28,33 @@ const useGithubIssue = ({
 	const [isLogin, setIsLogin] = useState(Boolean(gitUserPersonalAccessToken) ?? false);
 
 	useEffect(() => {
-		fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments?sort=updated&direction=${direction ?? 'desc'}`, {
-			method: 'GET',
-			headers: {
-			    'Accept' : "application/vnd.github+json",
-			    'X-GitHub-Api-Version': "2022-11-28",
-			    'Authorization': `Bearer ${gitPersonalAccessToken}`
-			},
-		    })
-			.then(response => {
-			    if(response.status !== 200){
-					throw new Error(`[Github API Exception] ${response.status} ${response.statusText}`)
-			    }
-			    return response.json();
+		if(gitUserPersonalAccessToken){
+			fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments?sort=updated&direction=${direction ?? 'desc'}`, {
+				method: 'GET',
+				headers: {
+					'Accept' : "application/vnd.github+json",
+					'X-GitHub-Api-Version': "2022-11-28",
+					'Authorization': `Bearer ${gitUserPersonalAccessToken}`
+				},
 			})
-			.then((result: GithubIssueResponse[] | []) => {
-			    setReplyList(result);
-			})
-			.catch(error => {
-			    throw new Error(error.toString()+`
+				.then(response => {
+					if(response.status !== 200){
+						throw new Error(`[Github API Exception] ${response.status} ${response.statusText}`)
+					}
+					return response.json();
+				})
+				.then((result: GithubIssueResponse[] | []) => {
+					setReplyList(result);
+				})
+				.catch(error => {
+					throw new Error(error.toString()+`
 			    https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments
 			    `);
-			});
+				});
+		}
 
-	},[reloadNumber, gitPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo, direction]);
+
+	},[reloadNumber, gitUserPersonalAccessToken, gitIssueNumber, gitOwner, gitRepo, direction]);
 
 	const locationLogin = (gitOAuthClientId: string) => {
 		const githubLoginUrl = "https://github.com/login/oauth/authorize"
@@ -66,14 +67,14 @@ const useGithubIssue = ({
 
 
 	const comment = useCallback((message: string,options?:CommentOption) => {
-		if(isCommentLoading === false){
+		if(isCommentLoading === false && gitUserPersonalAccessToken){
 
 			setIsCommentLoading(true);
 			fetch(`https://api.github.com/repos/${gitOwner}/${gitRepo}/issues/${gitIssueNumber}/comments`,{
 			method: "POST",
 			headers: {
 				"Accept": "application/vnd.github+json",
-				"Authorization": `Bearer ${gitUserPersonalAccessToken ?? gitPersonalAccessToken}`,
+				"Authorization": `Bearer ${gitUserPersonalAccessToken}`,
 				"X-GitHub-Api-Version": "2022-11-28"
 			},
 			body: JSON.stringify({
@@ -97,7 +98,7 @@ const useGithubIssue = ({
 				setIsCommentLoading(false);
 			});
 		}
-	},[]);
+	},[gitUserPersonalAccessToken]);
 
 	const reload = useCallback(() => {
 		setReloadNumber(reloadNumber + 1);
